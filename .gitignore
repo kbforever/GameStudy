@@ -6,6 +6,8 @@
 /[Bb]uilds/
 /[Ll]ogs/
 /[Uu]ser[Ss]ettings/
+/[Pp]ackages/
+/.vscode/
  
 # 自动生成的文件
 *.pidb.meta
