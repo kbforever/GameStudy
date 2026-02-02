@@ -106,6 +106,13 @@ namespace Managers
             if (boardManager == null)
             {
                 boardManager = FindObjectOfType<BoardManager>();
+                // 如果未找到，创建一个
+                if (diceManager == null)
+                {
+                    GameObject boardManagerObject = new GameObject("BoardManager");
+                    boardManager = boardManagerObject.AddComponent<BoardManager>();
+                    Debug.Log("GameManager: BoardManager 创建成功");
+                }
             }
 
             if (diceManager == null)

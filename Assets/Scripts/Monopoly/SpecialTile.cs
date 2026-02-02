@@ -18,7 +18,7 @@ namespace Monopoly
         /// <param name="index">格子索引</param>
         /// <param name="name">格子名称</param>
         /// <param name="type">格子类型</param>
-        public void Initialize(int index, string name, TileType type)
+        public override void Initialize(int index, string name, TileType type)
         {
             base.Initialize(index, name, type);
         }

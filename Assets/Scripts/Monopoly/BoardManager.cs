@@ -23,6 +23,13 @@ namespace Monopoly
         [Header("棋盘布局配置")]
         [SerializeField] private float boardRadius = 9f; // 棋盘半径（从中心到边的距离）
         [SerializeField] private Vector3 boardCenter = Vector3.zero; // 棋盘中心位置
+        
+
+
+        [Header("摄像头角度调整")]
+        [SerializeField] private float verticalOffset = 1f; // 垂直偏移
+        [SerializeField] private float padding = 0.1f; // 边距系数 
+        private Camera cam;
 
         /// <summary>
         /// 格子间距（根据棋盘半径自动计算）
@@ -51,12 +58,20 @@ namespace Monopoly
 
         private void Awake()
         {
+            cam = Camera.main;
             TryLoadPrefabsFromAssets();
 
             if (tiles.Count == 0)
             {
                 InitializeDefaultBoard();
+                
             }
+
+            
+        }
+        private void Update()
+        {
+            AdjustCamera();
         }
 
         private void TryLoadPrefabsFromAssets()
@@ -396,6 +411,41 @@ namespace Monopoly
                     tiles[index] = tile;
                 }
             }
+        }
+
+
+        /// <summary>
+        /// 根据棋盘大小，自适应调整摄像头角度，足以看见整个棋盘大小
+        /// </summary>
+        private void AdjustCamera()
+        {
+            if (cam == null || boardCenter == null) return;
+            float requiredDistance = CalculateRequiredDistance();
+
+            // 设置摄像头位置
+            //Vector3 direction = (cam.transform.position - boardCenter).normalized;
+            Vector3 direction = Vector3.zero;
+            if (direction == Vector3.zero) direction = Vector3.up;
+
+            Vector3 targetPosition = boardCenter + direction * requiredDistance;
+            targetPosition.y += verticalOffset; // 添加垂直偏移
+
+            cam.transform.position = targetPosition;
+            cam.transform.LookAt(boardCenter);
+
+        }
+
+        private float CalculateRequiredDistance()
+        {
+            // 根据视野角度计算所需距离
+            float halfFOV = cam.fieldOfView * 0.5f * Mathf.Deg2Rad;
+
+            // 考虑棋盘半径和边距
+            float requiredDistance = (boardRadius * padding) / Mathf.Tan(halfFOV);
+
+            // 限制距离范围
+            //return Mathf.Clamp(requiredDistance, minDistance, maxDistance);
+            return requiredDistance;
         }
     }
 }
