@@ -1,5 +1,12 @@
 using UnityEngine;
 using Singleton;
+using System.IO;
+using UnityEditor;
+using System;
+using System.Reflection;
+using System.Collections.Generic;
+using static UnityEngine.Rendering.DebugUI;
+using UI;
 
 namespace Managers
 {
@@ -16,11 +23,15 @@ namespace Managers
         [Header("UI 面板引用")]
         [SerializeField] private GameObject mainMenuPanel;
         [SerializeField] private GameObject gameUIPanel;
+        [SerializeField] private GameObject playerSelectUI;
+
+        Dictionary<string, GameObject> UIDict;
 
         protected override void OnSingletonAwake()
         {
             base.OnSingletonAwake();
             EnsureCanvasExists();
+            UIDict = new Dictionary<string, GameObject>();
         }
 
         /// <summary>
@@ -61,7 +72,36 @@ namespace Managers
             if (panel == null) return;
             AttachToCanvas(panel);
             mainMenuPanel = panel;
+            UIDict.Add(ViewType.mainMenuPanel.ToString(), panel);
         }
+
+
+        public GameObject RegisterGameUI<T>(string UIName) where T: MonoBehaviour
+        {
+            
+            string UIPath = $"Assets/Prefabs/UI/{UIName}.prefab";
+            GameObject prefab = AssetDatabase.LoadAssetAtPath<GameObject>(UIPath);
+
+            if (prefab != null)
+            {
+                GameObject obj = Instantiate(prefab);
+                obj.name = prefab.name;
+                
+
+                obj.AddComponent<T>();
+
+                AttachToCanvas(obj);
+                UIDict.Add(obj.name, obj);
+                return obj;
+            }
+            else
+            {
+                Debug.LogWarning($"未能从 {UIPath} 加载预制体，请检查路径。");
+                return null;
+            }
+            
+        }
+
 
         /// <summary>
         /// 注册游戏内 UI 面板
@@ -71,6 +111,7 @@ namespace Managers
             if (panel == null) return;
             AttachToCanvas(panel);
             gameUIPanel = panel;
+            UIDict.Add(ViewType.gameUIPanel.ToString(), panel);
         }
 
         /// <summary>
@@ -90,19 +131,20 @@ namespace Managers
         }
 
         /// <summary>
-        /// 显示游戏 UI、隐藏主菜单
+        /// 显示游戏 UI
         /// </summary>
-        public void ShowGameUI()
+        public void ShowGameUI(string UIName)
         {
-            if (mainMenuPanel != null)
-            {
-                mainMenuPanel.SetActive(false);
-            }
+            if (UIDict.ContainsKey(UIName)) UIDict[UIName].SetActive(true);
+        }
 
-            if (gameUIPanel != null)
-            {
-                gameUIPanel.SetActive(true);
-            }
+        /// <summary>
+        /// 隐藏游戏UI
+        /// </summary>
+        /// <param name="UIName"></param>
+        public void HideGameUI(string UIName)
+        {
+            if (UIDict.ContainsKey(UIName)) UIDict[UIName].SetActive(false);
         }
 
         /// <summary>
@@ -110,8 +152,10 @@ namespace Managers
         /// </summary>
         public void HideAll()
         {
-            if (mainMenuPanel != null) mainMenuPanel.SetActive(false);
-            if (gameUIPanel != null) gameUIPanel.SetActive(false);
+            foreach(var obj in UIDict.Values)
+            {
+                obj.SetActive(false);
+            }
         }
     }
 }

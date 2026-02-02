@@ -4,7 +4,8 @@ using UnityEngine;
 using UnityEngine.Events;
 using Monopoly;
 using Singleton;
-
+using System;
+using UI;
 namespace Managers
 {
     /// <summary>
@@ -148,7 +149,7 @@ namespace Managers
 
         private void Start()
         {
-            InitializeGame();
+            //InitializeGame();
         }
 
         /// <summary>
@@ -183,6 +184,8 @@ namespace Managers
 
             currentPlayerIndex = 0;
             currentState = GameState.Playing;
+
+            UIManager.Instance.ShowGameUI(ViewType.gameUIPanel.ToString());
 
             Debug.Log("游戏初始化完成");
             StartPlayerTurn();
@@ -289,6 +292,11 @@ namespace Managers
             {
                 aiPlayer.StartAITurn();
             }
+            else
+            {
+                if (currentPlayer is HumanPlayer humanPlayer) humanPlayer.StartHumanTurt();
+            }
+
         }
 
         /// <summary>
@@ -350,7 +358,7 @@ namespace Managers
         /// 投掷骰子并移动玩家（完整流程）
         /// </summary>
         /// <returns>骰子结果，如果投掷失败返回null</returns>
-        public DiceResult RollDiceAndMove()
+        public DiceResult RollDiceAndMove(Action EndCallBack=null)
         {
             if (currentState != GameState.Playing)
             {
@@ -389,6 +397,7 @@ namespace Managers
             {
                 // 移动完成后的回调
                 Debug.Log($"{currentPlayer.PlayerName} 移动动画完成");
+                EndCallBack?.Invoke();
             });
             
             if (moveCoroutine == null)
@@ -401,7 +410,7 @@ namespace Managers
             if (!result.isDouble)
             {
                 // 注意：这里不自动结束回合，由UI或其他逻辑决定何时结束
-                // EndPlayerTurn();
+                 //EndPlayerTurn();
             }
 
             return result;

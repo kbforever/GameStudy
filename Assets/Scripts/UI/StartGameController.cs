@@ -13,11 +13,10 @@ namespace UI
     [RequireComponent(typeof(StartGameView))]
     public class StartGameController : BaseController
     {
-        private StartGameView view;
 
-        public void BindView(StartGameView startGameView)
+        public override void BindView(BaseView view)
         {
-            view = startGameView;
+            base.BindView(view);
         }
 
         public override void InitializeController()
@@ -41,9 +40,9 @@ namespace UI
             gm.InitializeGame();
 
             // 切换 UI
-            if (view != null)
+            if (View != null)
             {
-                view.ShowGameUI();
+                UIManager.Instance.HideGameUI(ViewType.mainMenuPanel.ToString());
             }
         }
 

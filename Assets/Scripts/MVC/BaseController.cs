@@ -7,6 +7,12 @@ namespace MVC
     /// </summary>
     public abstract class BaseController : MonoBehaviour
     {
+        protected BaseView View;
+        public virtual void BindView(BaseView view)
+        {
+            View = view;
+        }
+
         /// <summary>
         /// 初始化控制器
         /// </summary>

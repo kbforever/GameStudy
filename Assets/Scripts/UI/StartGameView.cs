@@ -3,6 +3,8 @@ using Managers;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
+using Unity.VisualScripting;
+
 #if UNITY_EDITOR
 using UnityEditor;
 #endif
@@ -46,7 +48,7 @@ namespace UI
             // 查找 start 按钮
             if (startButton == null)
             {
-                Transform t = FindChildRecursive(transform, "start");
+                Transform t = transform.FindChildRecursive("start");
                 if (t != null)
                 {
                     startButton = t.GetComponent<Button>();
@@ -56,7 +58,7 @@ namespace UI
             // 查找 quit 按钮
             if (quitButton == null)
             {
-                Transform t = FindChildRecursive(transform, "quit");
+                Transform t = transform.FindChildRecursive("quit");
                 if (t != null)
                 {
                     quitButton = t.GetComponent<Button>();
@@ -64,28 +66,7 @@ namespace UI
             }
         }
 
-        /// <summary>
-        /// 递归查找指定名字的子节点
-        /// </summary>
-        private Transform FindChildRecursive(Transform parent, string targetName)
-        {
-            if (parent.name == targetName)
-            {
-                return parent;
-            }
 
-            for (int i = 0; i < parent.childCount; i++)
-            {
-                Transform child = parent.GetChild(i);
-                Transform result = FindChildRecursive(child, targetName);
-                if (result != null)
-                {
-                    return result;
-                }
-            }
-
-            return null;
-        }
 
         public override void InitializeView()
         {
@@ -113,20 +94,20 @@ namespace UI
         /// <summary>
         /// 切换到游戏界面（隐藏主菜单，显示游戏 UI）
         /// </summary>
-        public void ShowGameUI()
-        {
-            // 优先交给 UIManager 统一管理
-            var uiManager = Managers.UIManager.Instance ?? FindObjectOfType<Managers.UIManager>();
-            if (uiManager != null)
-            {
-                uiManager.ShowGameUI();
-                return;
-            }
+        //public void ShowGameUI()
+        //{
+        //    // 优先交给 UIManager 统一管理
+        //    var uiManager = Managers.UIManager.Instance ?? FindObjectOfType<Managers.UIManager>();
+        //    if (uiManager != null)
+        //    {
+        //        uiManager.ShowGameUI();
+        //        return;
+        //    }
 
-            //// 如果没有 UIManager，则退回到本地控制
-            //if (mainMenuPanel != null) mainMenuPanel.SetActive(false);
-            //if (gameUIPanel != null) gameUIPanel.SetActive(true);
-        }
+        //    //// 如果没有 UIManager，则退回到本地控制
+        //    //if (mainMenuPanel != null) mainMenuPanel.SetActive(false);
+        //    //if (gameUIPanel != null) gameUIPanel.SetActive(true);
+        //}
     }
 }
 

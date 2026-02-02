@@ -1,3 +1,7 @@
+using Managers;
+using System.IO;
+using UI;
+using UnityEditor;
 using UnityEngine;
 
 namespace Monopoly
@@ -8,8 +12,39 @@ namespace Monopoly
     /// </summary>
     public class HumanPlayer : Player
     {
+        private GameObject playerRollUI; // 摇筛子UI
+        private GameObject playerBuyUI;
         // 预留扩展：可以在这里加上与输入/UI 相关的逻辑
         // 当前阶段暂不需要额外代码。
+
+
+
+        /// <summary>
+        /// 读取以及初始化玩家摇筛UI以及买卖UI
+        /// </summary>
+        void InitUIView()
+        {
+            if (playerRollUI == null)
+            {
+                playerRollUI = Managers.UIManager.Instance.RegisterGameUI<playerRollUIView>(nameof(playerRollUI));
+                
+            }
+
+            if (playerBuyUI == null)
+            {
+                playerBuyUI = Managers.UIManager.Instance.RegisterGameUI<playerBuyUIView>(nameof(playerBuyUI));
+            }
+        }
+
+
+        // 玩家开始操作
+        public void StartHumanTurt()
+        {
+            InitUIView();
+            // 打开掷筛UI，关闭操作UI
+            playerBuyUI.SetActive(false);
+            playerRollUI.SetActive(true);
+        }
     }
 }
 

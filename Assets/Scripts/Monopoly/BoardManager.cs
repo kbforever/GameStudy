@@ -28,7 +28,7 @@ namespace Monopoly
 
         [Header("摄像头角度调整")]
         [SerializeField] private float verticalOffset = 1f; // 垂直偏移
-        [SerializeField] private float padding = 0.1f; // 边距系数 
+        [SerializeField] private float padding = 1.1f; // 边距系数 
         private Camera cam;
 
         /// <summary>
@@ -64,15 +64,13 @@ namespace Monopoly
             if (tiles.Count == 0)
             {
                 InitializeDefaultBoard();
-                
+                AdjustCamera();
+
             }
 
             
         }
-        private void Update()
-        {
-            AdjustCamera();
-        }
+
 
         private void TryLoadPrefabsFromAssets()
         {
